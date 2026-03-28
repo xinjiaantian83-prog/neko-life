@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>役満しか出ない麻雀</title>
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  background:#111;
+  color:#fff;
+  font-family:sans-serif;
+  text-align:center;
+}
+
+h1{
+  font-size:22px;
+  margin-bottom:20px;
+}
+
+#draw{
+  padding:14px 28px;
+  font-size:18px;
+  border:none;
+  border-radius:8px;
+  background:#f5c842;
+  color:#000;
+  cursor:pointer;
+}
+
+#result{
+  margin-top:30px;
+  font-size:22px;
+  min-height:60px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>役満しか出ない麻雀</h1>
+
+<button id="draw">ツモる</button>
+
+<div id="result">押せ</div>
+
+<script>
+const hands = [
+  {name:"国士無双", result:"なぜか負け"},
+  {name:"四暗刻", result:"引き分け"},
+  {name:"大三元", result:"勝ち"},
+  {name:"字一色", result:"親に振り込んだ"},
+  {name:"緑一色", result:"審議"},
+  {name:"九蓮宝燈", result:"マイナス20000点"}
+];
+
+document.getElementById("draw").onclick = () => {
+  const r = hands[Math.floor(Math.random() * hands.length)];
+  document.getElementById("result").innerHTML =
+    `✨ ${r.name}！！<br>${r.result}`;
+};
+</script>
+
+</body>
+</html>
