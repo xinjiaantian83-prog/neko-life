@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>役満しか出ない麻雀</title>
-
 <style>
 body{
   margin:0;
-  height:100vh;
+  min-height:100vh;
   display:flex;
   flex-direction:column;
   justify-content:center;
@@ -17,53 +16,96 @@ body{
   color:#fff;
   font-family:sans-serif;
   text-align:center;
+  padding:20px;
 }
 
 h1{
-  font-size:22px;
-  margin-bottom:20px;
+  font-size:32px;
+  margin-bottom:24px;
 }
 
 #draw{
-  padding:14px 28px;
-  font-size:18px;
+  padding:16px 34px;
+  font-size:24px;
   border:none;
-  border-radius:8px;
+  border-radius:12px;
   background:#f5c842;
   color:#000;
   cursor:pointer;
+  font-weight:bold;
+}
+
+#handName{
+  margin-top:30px;
+  font-size:34px;
+  font-weight:bold;
+  min-height:50px;
+}
+
+#tiles{
+  margin-top:20px;
+  font-size:44px;
+  line-height:1.4;
+  letter-spacing:0.08em;
+  min-height:140px;
+  word-break:break-word;
 }
 
 #result{
-  margin-top:30px;
-  font-size:22px;
-  min-height:60px;
+  margin-top:24px;
+  font-size:30px;
+  min-height:50px;
 }
 </style>
 </head>
-
 <body>
 
 <h1>役満しか出ない麻雀</h1>
-
 <button id="draw">ツモる</button>
 
+<div id="handName"></div>
+<div id="tiles">🀫🀫🀫🀫🀫</div>
 <div id="result">押せ</div>
 
 <script>
 const hands = [
-  {name:"国士無双", result:"なぜか負け"},
-  {name:"四暗刻", result:"引き分け"},
-  {name:"大三元", result:"勝ち"},
-  {name:"字一色", result:"親に振り込んだ"},
-  {name:"緑一色", result:"審議"},
-  {name:"九蓮宝燈", result:"マイナス20000点"}
+  {
+    name:"国士無双",
+    tiles:"🀇 🀏 🀙 🀡 🀐 🀘 🀀 🀁 🀂 🀃 🀆 🀅 🀄 🀄",
+    result:"なぜか負け"
+  },
+  {
+    name:"四暗刻",
+    tiles:"🀇🀇🀇　🀈🀈🀈　🀉🀉🀉　🀀🀀🀀　🀄🀄",
+    result:"引き分け"
+  },
+  {
+    name:"大三元",
+    tiles:"🀆🀆🀆　🀅🀅🀅　🀄🀄🀄　🀇🀇🀇　🀈🀈",
+    result:"勝ち"
+  },
+  {
+    name:"字一色",
+    tiles:"🀀🀀🀀　🀁🀁🀁　🀂🀂🀂　🀃🀃🀃　🀄🀄",
+    result:"親に振り込んだ"
+  },
+  {
+    name:"緑一色",
+    tiles:"🀑🀑🀑　🀒🀒🀒　🀓🀓🀓　🀕🀕🀕　🀅🀅",
+    result:"審議"
+  },
+  {
+    name:"九蓮宝燈",
+    tiles:"🀐🀐🀐　🀑　🀒　🀓　🀔　🀕　🀖　🀗🀗🀗　🀘",
+    result:"マイナス20000点"
+  }
 ];
 
 document.getElementById("draw").onclick = () => {
   const r = hands[Math.floor(Math.random() * hands.length)];
-  document.getElementById("result").innerHTML =
-    `✨ ${r.name}！！<br>${r.result}`;
+  document.getElementById("handName").textContent = `✨ ${r.name} !!`;
+  document.getElementById("tiles").textContent = r.tiles;
+  document.getElementById("result").textContent = r.result;
 };
 </script>
 
