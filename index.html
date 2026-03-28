@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>猫がいる生活（ちょいクソ）</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fff;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Zen Maru Gothic', 'Hiragino Maru Gothic ProN', sans-serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle, #e8e8e8 1px, transparent 1px);
+    background-size: 28px 28px;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .stage {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  h1 {
+    font-size: clamp(14px, 3.5vw, 18px);
+    color: #aaa;
+    letter-spacing: 0.12em;
+    font-weight: 400;
+  }
+
+  .cat-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+
+  #cat {
+    width: 180px;
+    height: 180px;
+    object-fit: contain;
+    transition: transform 0.15s ease, opacity 0.6s ease;
+    transform-origin: center bottom;
+    will-change: transform;
+    filter: drop-shadow(0 6px 18px rgba(0,0,0,0.10));
+  }
+
+  @keyframes pet {
+    0%   { transform: scale(1); }
+    30%  { transform: scale(1.14) translateY(-6px); }
+    60%  { transform: scale(1.08) translateY(-3px); }
+    100% { transform: scale(1); }
+  }
+  .anim-pet { animation: pet 0.4s ease forwards; }
+
+  @keyframes angry {
+    0%,100% { transform: rotate(0deg); }
+    20%     { transform: rotate(-7deg); }
+    40%     { transform: rotate(7deg); }
+    60%     { transform: rotate(-5deg); }
+    80%     { transform: rotate(5deg); }
+  }
+  .anim-angry { animation: angry 0.5s ease forwards; }
+
+  .anim-vanish { opacity: 0 !important; }
+
+  .heart {
+    position: absolute;
+    font-size: 22px;
+    pointer-events: none;
+    animation: floatHeart 0.9s ease forwards;
+  }
+  @keyframes floatHeart {
+    0%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-70px) scale(1.4); }
+  }
+
+  #status {
+    font-size: clamp(13px, 3vw, 15px);
+    color: #888;
+    min-height: 22px;
+    letter-spacing: 0.08em;
+    transition: color 0.3s;
+  }
+
+  #ending {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.92);
+    z-index: 100;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    animation: fadeIn 0.8s ease;
+  }
+  #ending.show { display: flex; }
+  @keyframes fadeIn {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  #ending p {
+    font-size: clamp(22px, 6vw, 32px);
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+    line-height: 1.5;
+  }
+  #ending small { font-size: 13px; color: #bbb; }
+  #restart {
+    margin-top: 12px;
+    padding: 10px 28px;
+    border: 2px solid #333;
+    border-radius: 100px;
+    background: transparent;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    letter-spacing: 0.1em;
+    transition: background 0.2s, color 0.2s;
+  }
+  #restart:hover { background: #333; color: #fff; }
+
+  #mood-tag {
+    font-size: 11px;
+    color: #ccc;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    min-height: 16px;
+  }
+
+  .zzz {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    opacity: 0;
+    animation: floatZzz 2s ease infinite;
+    pointer-events: none;
+  }
+  @keyframes floatZzz {
+    0%   { opacity: 0; transform: translate(0, 0) scale(0.7); }
+    40%  { opacity: 1; }
+    100% { opacity: 0; transform: translate(14px, -30px) scale(1.1); }
+  }
+  .zzz:nth-child(2) { animation-delay: 0.7s; font-size: 14px; right: 0; top: 20px; }
+  .zzz:nth-child(3) { animation-delay: 1.4s; font-size: 10px; right: 20px; top: 5px; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <h1>猫がいる生活（ちょいクソ）</h1>
+  <div class="cat-wrap" id="catWrap">
+    <img id="cat" src="" alt="猫" draggable="false">
+    <span class="zzz" id="z1" style="display:none">z</span>
+    <span class="zzz" id="z2" style="display:none">z</span>
+    <span class="zzz" id="z3" style="display:none">z</span>
+  </div>
+  <div id="mood-tag">normal</div>
+  <div id="status">そっとなでてみる…</div>
+</div>
+
+<div id="ending">
+  <p>😺<br>満足した</p>
+  <small>猫は去っていった。</small>
+  <button id="restart">もう一度</button>
+</div>
+
+<script>
+const SVG = {
+  normal: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <polygon points="18,42 10,18 36,32" fill="#f5c842"/>
+    <polygon points="82,42 90,18 64,32" fill="#f5c842"/>
+    <polygon points="20,40 14,22 34,33" fill="#f8a0a0"/>
+    <polygon points="80,40 86,22 66,33" fill="#f8a0a0"/>
+    <ellipse cx="50" cy="65" rx="32" ry="26" fill="#f5c842"/>
+    <ellipse cx="50" cy="47" rx="30" ry="28" fill="#f5c842"/>
+    <ellipse cx="38" cy="44" rx="5" ry="6" fill="#222"/>
+    <ellipse cx="62" cy="44" rx="5" ry="6" fill="#222"/>
+    <circle cx="40" cy="42" r="1.5" fill="#fff"/>
+    <circle cx="64" cy="42" r="1.5" fill="#fff"/>
+    <ellipse cx="50" cy="52" rx="3" ry="2" fill="#f08080"/>
+    <path d="M47,54 Q50,58 53,54" stroke="#c06060" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <line x1="20" y1="51" x2="42" y2="53" stroke="#aaa" stroke-width="1"/>
+    <line x1="20" y1="55" x2="42" y2="55" stroke="#aaa" stroke-width="1"/>
+    <line x1="58" y1="53" x2="80" y2="51" stroke="#aaa" stroke-width="1"/>
+    <line x1="58" y1="55" x2="80" y2="55" stroke="#aaa" stroke-width="1"/>
+    <ellipse cx="28" cy="84" rx="10" ry="7" fill="#f5c842"/>
+    <ellipse cx="72" cy="84" rx="10" ry="7" fill="#f5c842"/>
+    <path d="M80,80 Q105,70 95,55" stroke="#f5c842" stroke-width="7" fill="none" stroke-linecap="round"/>
+  </svg>`,
+
+  sleep: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <polygon points="18,48 10,24 36,38" fill="#aac4e8"/>
+    <polygon points="82,48 90,24 64,38" fill="#aac4e8"/>
+    <polygon points="20,46 14,28 34,38" fill="#c8daf5"/>
+    <polygon points="80,46 86,28 66,38" fill="#c8daf5"/>
+    <ellipse cx="50" cy="72" rx="34" ry="20" fill="#aac4e8"/>
+    <ellipse cx="50" cy="50" rx="29" ry="27" fill="#aac4e8"/>
+    <path d="M33,48 Q38,44 43,48" stroke="#555" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M57,48 Q62,44 67,48" stroke="#555" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <ellipse cx="50" cy="55" rx="3" ry="2" fill="#9ab8d8"/>
+    <path d="M46,57 Q50,62 54,57" stroke="#7a9cbf" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+    <line x1="20" y1="54" x2="42" y2="56" stroke="#8ab" stroke-width="1"/>
+    <line x1="20" y1="58" x2="42" y2="58" stroke="#8ab" stroke-width="1"/>
+    <line x1="58" y1="56" x2="80" y2="54" stroke="#8ab" stroke-width="1"/>
+    <line x1="58" y1="58" x2="80" y2="58" stroke="#8ab" stroke-width="1"/>
+    <path d="M75,80 Q95,70 88,58 Q82,50 76,60" stroke="#aac4e8" stroke-width="7" fill="none" stroke-linecap="round"/>
+  </svg>`,
+
+  angry: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+    <polygon points="15,36 8,10 35,28" fill="#e87070"/>
+    <polygon points="85,36 92,10 65,28" fill="#e87070"/>
+    <polygon points="17,34 12,14 33,28" fill="#f0a0a0"/>
+    <polygon points="83,34 88,14 67,28" fill="#f0a0a0"/>
+    <ellipse cx="50" cy="65" rx="33" ry="27" fill="#e87070"/>
+    <ellipse cx="50" cy="46" rx="30" ry="28" fill="#e87070"/>
+    <ellipse cx="38" cy="43" rx="5" ry="6" fill="#111"/>
+    <ellipse cx="62" cy="43" rx="5" ry="6" fill="#111"/>
+    <circle cx="40" cy="41" r="1.5" fill="#fff"/>
+    <circle cx="64" cy="41" r="1.5" fill="#fff"/>
+    <line x1="30" y1="34" x2="45" y2="38" stroke="#8b0000" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="70" y1="34" x2="55" y2="38" stroke="#8b0000" stroke-width="2.5" stroke-linecap="round"/>
+    <ellipse cx="50" cy="52" rx="3" ry="2" fill="#c05050"/>
+    <path d="M44,59 Q50,55 56,59" stroke="#8b0000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <line x1="18" y1="50" x2="40" y2="53" stroke="#c88" stroke-width="1.2" transform="rotate(-5,29,51)"/>
+    <line x1="18" y1="55" x2="40" y2="55" stroke="#c88" stroke-width="1.2"/>
+    <line x1="60" y1="53" x2="82" y2="50" stroke="#c88" stroke-width="1.2" transform="rotate(5,71,51)"/>
+    <line x1="60" y1="55" x2="82" y2="55" stroke="#c88" stroke-width="1.2"/>
+    <path d="M80,78 Q108,60 98,42" stroke="#e87070" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <text x="18" y="28" font-size="16" fill="#c00">💢</text>
+  </svg>`
+};
+
+let mood = 'normal', isVanished = false, gameOver = false, petCount = 0;
+
+const cat = document.getElementById('cat');
+const status = document.getElementById('status');
+const moodTag = document.getElementById('mood-tag');
+const catWrap = document.getElementById('catWrap');
+const ending = document.getElementById('ending');
+const z1 = document.getElementById('z1');
+const z2 = document.getElementById('z2');
+const z3 = document.getElementById('z3');
+
+const msgs = {
+  normal: ['そっとなでる…', 'なでた。', 'また、なでた。', 'いい感じ？', 'ゴロゴロ…？', '…無視された。'],
+  angry:  ['シャー！', 'おこだ。', 'やめてほしいらしい。', '爪が出た。', 'ガブッ'],
+  sleep:  ['寝てる。', '起こすな。', 'すやすや…', '（なでるな）'],
+  vanish: ['猫、消えた。', '……？', 'どこ……？', '（いない）']
+};
+
+function rand(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+function setSrc(m) {
+  const blob = new Blob([SVG[m]], {type: 'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const old = cat.src;
+  cat.src = url;
+  if (old && old.startsWith('blob:')) URL.revokeObjectURL(old);
+}
+
+function setMood(m, msg) {
+  mood = m;
+  setSrc(m);
+  moodTag.textContent = m;
+  if (msg) status.textContent = msg;
+  const zShow = m === 'sleep';
+  z1.style.display = z2.style.display = z3.style.display = zShow ? '' : 'none';
+}
+
+function removeAnim() { cat.classList.remove('anim-pet', 'anim-angry'); }
+
+function pet() {
+  if (gameOver || isVanished) return;
+  petCount++;
+  removeAnim();
+  void cat.offsetWidth;
+  if (Math.random() < 0.10) {
+    setMood('angry', rand(msgs.angry));
+    cat.classList.add('anim-angry');
+    setTimeout(() => { if (!gameOver) setMood('normal', 'おさまった…'); }, 2200);
+  } else {
+    setMood('normal', rand(msgs.normal));
+    cat.classList.add('anim-pet');
+    spawnHeart();
+  }
+  setTimeout(removeAnim, 600);
+}
+
+function spawnHeart() {
+  const h = document.createElement('span');
+  h.className = 'heart';
+  h.textContent = ['🩷','💛','🤍','🐾'][Math.floor(Math.random()*4)];
+  h.style.left = (50 + (Math.random()-0.5)*40) + '%';
+  h.style.top = '20%';
+  catWrap.appendChild(h);
+  setTimeout(() => h.remove(), 900);
+}
+
+setInterval(() => {
+  if (gameOver) return;
+  const r = Math.random();
+  if (r < 0.02) {
+    gameOver = true;
+    status.textContent = '…';
+    setTimeout(() => { ending.classList.add('show'); }, 800);
+  } else if (r < 0.07) {
+    if (isVanished) return;
+    isVanished = true;
+    cat.classList.add('anim-vanish');
+    status.textContent = rand(msgs.vanish);
+    setTimeout(() => {
+      cat.classList.remove('anim-vanish');
+      isVanished = false;
+      status.textContent = '戻ってきた。';
+    }, 3000);
+  } else if (r < 0.12) {
+    if (mood === 'sleep') return;
+    setMood('sleep', rand(msgs.sleep));
+    setTimeout(() => { if (!gameOver && mood === 'sleep') setMood('normal', '起きた。'); }, 4000);
+  }
+}, 3000);
+
+catWrap.addEventListener('click', pet);
+catWrap.addEventListener('touchstart', (e) => { e.preventDefault(); pet(); }, {passive: false});
+
+document.getElementById('restart').addEventListener('click', () => {
+  gameOver = false; isVanished = false; petCount = 0;
+  ending.classList.remove('show');
+  setMood('normal', 'また来た。');
+});
+
+setMood('normal', 'なでてみよう。');
+</script>
+</body>
+</html>
